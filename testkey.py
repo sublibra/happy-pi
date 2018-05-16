@@ -1,8 +1,9 @@
-#!/usr/bin/env python2.7  
+#!/usr/bin/python
 import RPi.GPIO as GPIO  
 import csv
 import datetime
-
+import sys
+import signal
 
 GPIO.setmode(GPIO.BCM)  
   
@@ -40,12 +41,18 @@ def callback_sad(channel):
         time = datetime.datetime.now().isoformat()
         writer.writerow([time, 'sad'])
     print "Sad pressed"  
-  
-print "Waiting for happiness!"  
+
+def sigterm_handler(_signo, _stack_frame):
+    """When sysvinit sends the TERM signal, cleanup before exiting."""
+    print("[" + datetime.datetime.now().isoformat() + "] received signal {}, exiting...".format(_signo))
+    GPIO.cleanup()
+    sys.exit(0)
+
   
 GPIO.add_event_detect(17, GPIO.FALLING, callback=callback_content, bouncetime=300)  
 GPIO.add_event_detect(23, GPIO.FALLING, callback=callback_sad, bouncetime=300)  
 GPIO.add_event_detect(24, GPIO.FALLING, callback=callback_happy, bouncetime=300)  
+signal.signal(signal.SIGTERM, sigterm_handler)
   
 try:  
     raw_input("Press enter to end program\n")  
