@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7  
+#!/usr/bin/python
 import RPi.GPIO as GPIO  
 import csv
 import datetime
@@ -14,7 +14,7 @@ GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)  
 GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_UP)  
 
-with open('happiness.csv', 'w') as csvfile:
+with open('/home/pi/happiness.csv', 'w') as csvfile:
     fieldnames = ['timestamp', 'happiness']
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
     writer.writeheader()
