@@ -9,7 +9,7 @@ import SocketServer
 
 GPIO.setmode(GPIO.BCM)  
 PORT = 666
-DESTFILE = 'happiness.csv'
+DESTFILE = '/home/pi/happiness.csv'
   
 # GPIO 17, 23, 24 set up as inputs, pulled up to avoid false detection.  
 GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)  
