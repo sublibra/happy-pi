@@ -1,10 +1,9 @@
-#!/usr/bin/env python2.7  
-# script by Alex Eames http://RasPi.tv  
-# http://RasPi.tv/how-to-use-interrupts-with-python-on-the-raspberry-pi-and-rpi-gpio-part-3  
+#!/usr/bin/python
 import RPi.GPIO as GPIO  
 import csv
 import datetime
-
+import sys
+import signal
 
 GPIO.setmode(GPIO.BCM)  
   
@@ -15,7 +14,7 @@ GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)  
 GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_UP)  
 
-with open('happiness.csv', 'w') as csvfile:
+with open('/home/pi/happiness.csv', 'w') as csvfile:
     fieldnames = ['timestamp', 'happiness']
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
     writer.writeheader()
@@ -39,7 +38,13 @@ def callback_sad(channel):
     global writer
     print "Sad pressed"  
     writer.writerow({'timestamp': time.time(), 'happiness': 'sad'})
-  
+
+def sigterm_handler(_signo, _stack_frame):
+    """When sysvinit sends the TERM signal, cleanup before exiting."""
+    print("[" + datetime.datetime.now().isoformat() + "] received signal {}, exiting...".format(_signo))
+    GPIO.cleanup()
+    sys.exit(0)
+
 print "Make sure you have a button connected so that when pressed"  
 print "it will connect GPIO port 23 (pin 16) to GND (pin 6)\n"  
 print "You will also need a second button connected so that when pressed"  
@@ -48,12 +53,11 @@ print "You will also need a third button connected so that when pressed"
 print "it will connect GPIO port 17 (pin 11) to GND (pin 14)"  
 raw_input("Press Enter when ready\n>")  
   
-# when a falling edge is detected on port 23, regardless of whatever   
-# else is happening in the program, the function my_callback2 will be run  
-# 'bouncetime=300' includes the bounce control written into interrupts2a.py  
+# Setting up signal interrupt
 GPIO.add_event_detect(23, GPIO.FALLING, callback=callback_sad, bouncetime=300)  
 GPIO.add_event_detect(17, GPIO.FALLING, callback=callback_content, bouncetime=300)  
 GPIO.add_event_detect(24, GPIO.FALLING, callback=callback_happy, bouncetime=300)  
+signal.signal(signal.SIGTERM, sigterm_handler)
   
 try:  
     raw_input("Press enter to end program\n>")  
