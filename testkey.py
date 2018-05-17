@@ -34,7 +34,7 @@ def emitEvent():
         print("EVENT TARGET NOT SET")
     else:   
         print("Sending event to:" + EVENT_TARGET)
-        requests.head(EVENT_TARGET)        
+        requests.head(EVENT_TARGET, timeout=0.1)        
 
 def callback_happy(channel):  
     with open(DESTFILE, 'a') as csvfile:
