@@ -6,10 +6,12 @@ import sys
 import signal
 import SimpleHTTPServer
 import SocketServer
+import requests
 
 GPIO.setmode(GPIO.BCM)  
 PORT = 666
 DESTFILE = '/home/pi/happiness.csv'
+EVENT_TARGET = 'http://localhost:8088'
   
 # GPIO 17, 23, 24 set up as inputs, pulled up to avoid false detection.  
 GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)  
@@ -30,6 +32,7 @@ def callback_happy(channel):
         writer = csv.writer(csvfile)
         time = datetime.datetime.now().isoformat()
         writer.writerow([time, 'happy'])
+    r = requests.post(EVENT_TARGET, data = {'time':time, 'happiness': 'happy'})
     print "Happy pressed"  
 
 def callback_content(channel):  
@@ -37,6 +40,7 @@ def callback_content(channel):
         writer = csv.writer(csvfile)
         time = datetime.datetime.now().isoformat()
         writer.writerow([time, 'content'])
+    r = requests.post(EVENT_TARGET, data = {'time':time, 'happiness': 'content'})
     print "Content pressed"  
 
 def callback_sad(channel):  
@@ -44,6 +48,7 @@ def callback_sad(channel):
         writer = csv.writer(csvfile)
         time = datetime.datetime.now().isoformat()
         writer.writerow([time, 'sad'])
+    r = requests.post(EVENT_TARGET, data = {'time':time, 'happiness': 'sad'})
     print "Sad pressed"  
 
 def sigterm_handler(_signo, _stack_frame):
