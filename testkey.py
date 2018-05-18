@@ -97,7 +97,7 @@ class RequestHandler(BaseHTTPRequestHandler):
 def run(server_class=HTTPServer, handler_class=RequestHandler, port=PORT):
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
-    print 'Happy server running localhost:{}'.format(PORT)
+    print '{}: Happy server running localhost:{}'.format(datetime.datetime.now().isoformat(), PORT)
     httpd.serve_forever()
 
 run()
