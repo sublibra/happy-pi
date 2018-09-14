@@ -16,7 +16,7 @@
 
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 NAME=happy-pi
-DAEMON=/home/pi/testkey.py
+DAEMON=/home/pi/buttonlistener.py
 DAEMONARGS=""
 PIDFILE=/var/run/$NAME.pid
 LOGFILE=/var/log/$NAME.log

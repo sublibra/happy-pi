@@ -8,13 +8,16 @@ the CSV file) and use the result.
 This is utilized in the second part of the hackaton project [happy-web](https://github.com/JohanBjerning/happy-web)
 
 # System overview
+* buttonlistener.py - Listen to HW key events from the buttons and sends the results to a mysql database. It also starts a webserver serving the log file for ease of access.
+* happy-pi - Linux run-level script ensuring the service is up and running after restart
+
+## Deprecated
 * testkey.py - Listen to HW key events from the buttons, starts a webserver serving the CSV file, 
 listens to emit event configuration, emits events through HTTP HEAD
-* happy-pi - Linux run-level script ensuring the service is up and running after restart
 
 # Usage
 * Install the scripts
-* Start testkey.py service
+* Start buttonlistener.py service
 * Start hitting the keys
 A file happiness.csv will be created and all new key pressed are appended to the file
 
@@ -24,7 +27,9 @@ The happy-receiver.py script will receive events as soon as a button is pressed 
 happiness.csv file
 
 # setup
-## testkey.py ##
+## buttonlistener.py ##
+
+## testkey.py [deprecated] ##
 Requires the python module requests. Install by:
 ```
 sudo pip install requests
@@ -40,6 +45,8 @@ sudo cp happy-pi /etc/init.d/
 sudo chmod +x /etc/init.d/happy-pi
 sudo update-rc.d happy.pi defaults
 ```
+
+Change the mysql host, port, user and pass to reflect your setup.
 
 ### usage ###
 The script can be manually started/stopped through 
