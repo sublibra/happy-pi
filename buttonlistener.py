@@ -4,11 +4,11 @@ import datetime
 import sys
 import signal
 import MySQLdb
+import time
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 
 GPIO.setmode(GPIO.BCM)
 PORT = 8088
-LOG="/var/log/happy-pi.log"
 
 # GPIO 17, 23, 24 set up as inputs, pulled up to avoid false detection.
 GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -57,26 +57,8 @@ GPIO.add_event_detect(23, GPIO.FALLING, callback=callback_sad, bouncetime=1000)
 GPIO.add_event_detect(24, GPIO.FALLING, callback=callback_happy, bouncetime=1000)
 signal.signal(signal.SIGTERM, sigterm_handler)
 
-# Setup web server serving the resulting files (and more)
-class RequestHandler(BaseHTTPRequestHandler):
-    def _set_headers(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'text/html')
-        self.end_headers()
-    def do_GET(self):
-        f = open(LOG, 'rb') 
-        self.send_response(200)
-        self.send_header('Content-type',    'text/txt')
-        self.end_headers()
-        self.wfile.write(f.read())
-        f.close()
+log("Starting Happy-pi button listener.")
+while True:
+    time.sleep(1e6)
 
-def run(server_class=HTTPServer, handler_class=RequestHandler, port=PORT):
-    server_address = ('', port)
-    httpd = server_class(server_address, handler_class)
-    log("Happy server running localhost: " + str(PORT)
-    httpd.serve_forever()
-
-run()
 GPIO.cleanup()           # clean up GPIO on normal exit
-
