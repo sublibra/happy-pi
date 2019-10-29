@@ -3,47 +3,39 @@ import RPi.GPIO as GPIO
 import datetime
 import sys
 import signal
-import MySQLdb
+import requests
 import time
-from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 
 GPIO.setmode(GPIO.BCM)
-PORT = 8088
+URL = "http://[SERVER]/add/mood/"
 
 # GPIO 17, 23, 24 set up as inputs, pulled up to avoid false detection.
 GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-def writetodb(happiness):
-    query = "INSERT INTO happy(happiness,timestamp) " \
-                "VALUES(%s,%s)"
-    args = (happiness, datetime.datetime.now())
-
+def reportHappiness(happiness):
+    print (happiness + " pressed")
+    headers = {"Content-Type": "application/json"}
+    req = None
     try:
-        conn = MySQLdb.connect(host="",port=3306,user="",passwd="",db="")
-        cursor = conn.cursor()
-        cursor.execute(query, args)
-        conn.commit()
+        req = requests.put(url + happiness, headers=headers)
         log(happiness + " pressed")
     except:
-        log("Couldn't add to database")
-
-    finally:
-        cursor.close()
-        conn.close()
+        if req != None:
+            log("Couldn't add to database")
 
 def log(mess):
     print(str(datetime.datetime.now()) + ": " + mess)
 
 def callback_happy(channel):
-    writetodb('happy')
+    reportHappiness('happy')
 
 def callback_content(channel):
-    writetodb('content')
+    reportHappiness('content')
 
 def callback_sad(channel):
-    writetodb('sad')
+    reportHappiness('sad')
 
 def sigterm_handler(_signo, _stack_frame):
     """When sysvinit sends the TERM signal, cleanup before exiting."""
