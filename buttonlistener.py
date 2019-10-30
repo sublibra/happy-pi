@@ -15,15 +15,14 @@ GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 def reportHappiness(happiness):
-    print (happiness + " pressed")
     headers = {"Content-Type": "application/json"}
     req = None
     try:
-        req = requests.put(url + happiness, headers=headers)
+        req = requests.put(URL + happiness, headers=headers)
         log(happiness + " pressed")
     except:
         if req != None:
-            log("Couldn't add to database")
+            log("Couldn't add to database") 
 
 def log(mess):
     print(str(datetime.datetime.now()) + ": " + mess)
